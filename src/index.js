@@ -76,4 +76,54 @@ const simpleLightBox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 250,
 });
+const createMarkup = arr => {
+  const markup = arr.hits
+    .map(
+      item =>
+        `<a class="photo-link" href="${item.largeImageURL}">
+            <div class="photo-card">
+            <div class="photo">
+            <img src="${item.webformatURL}" alt="${item.tags}" loading="lazy"/>
+            </div>
+                    <div class="info">
+                        <p class="info-item">
+                            <b>Likes</b>
+                            ${item.likes}
+                        </p>
+                        <p class="info-item">
+                            <b>Views</b>
+                            ${item.views}
+                        </p>
+                        <p class="info-item">
+                            <b>Comments</b>
+                            ${item.comments}
+                        </p>
+                        <p class="info-item">
+                            <b>Downloads</b>
+                            ${item.downloads}
+                        </p>
+                    </div>
+            </div>
+        </a>`
+    )
+    .join('');
+  getPic.gallery.insertAdjacentHTML('beforeend', markup);
+  simpleLightBox.refresh();
+};
+
+const message = (length, isVisible, per_page, total) => {
+  if (!length) {
+    Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
+  if (length >= isVisible) {
+    getPic.loadMore.style.display = 'flex';
+    Notify.info(`Hooray! We found ${total} images.`);
+  }
+  if (isVisible >= total) {
+    Notify.info("We're sorry, but you've reached the end of search results.");
+    getPic.loadMore.style.display = 'none';
+  }
+};
 
